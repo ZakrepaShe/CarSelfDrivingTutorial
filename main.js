@@ -46,7 +46,7 @@ const N = 100;
 const cars = generateCars(N);
 let bestCar = cars[0];
 for (let i = 0; i < cars.length; i++) {
-  cars[i].brain = localStorage.getItem('bestBrain') ? JSON.parse(localStorage.getItem('bestBrain')) : bestBrainTemplate;
+  cars[i].brain = localStorage.getItem('bestBrain') ? JSON.parse(localStorage.getItem('bestBrain')) : JSON.parse(JSON.stringify(bestBrainTemplate));
   if (i !== 0) {
     NeuralNetwork.mutate(cars[i].brain, 0.1);
   }
