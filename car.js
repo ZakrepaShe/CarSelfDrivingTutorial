@@ -11,6 +11,7 @@ class Car {
     this.friction = 0.05;
     this.angle = 0;
     this.damaged = false;
+    this.passedPath = 0;
 
     this.useBrain = controlType === "AI";
 
@@ -29,12 +30,13 @@ class Car {
     }
     if (this.sensor) {
       this.sensor.update(roadBorders, traffic);
-      const offsets = this.sensor.readings.map(
-        s => s === null ? 0 : 1 - s.offset
-      )
-      const outputs = NeuralNetwork.feedForward(offsets, this.brain);
 
       if (this.useBrain) {
+        const offsets = this.sensor.readings.map(
+          s => s === null ? 0 : 1 - s.offset
+        )
+        const outputs = NeuralNetwork.feedForward(offsets, this.brain);
+
         this.controls.forward = outputs[0];
         this.controls.left = outputs[1];
         this.controls.right = outputs[2];
@@ -104,7 +106,8 @@ class Car {
       this.speed = 0;
     }
 
-    if (this.speed !==0) {
+    if (this.speed !== 0) {
+      this.passedPath += this.speed/60
       const flip = this.speed > 0 ? 1 : -1
       if (this.controls.left) {
         this.angle += 0.03 * flip;
@@ -113,8 +116,6 @@ class Car {
         this.angle -= 0.03 * flip;
       }
     }
-
-
 
     this.x-=Math.sin(this.angle)*this.speed;
     this.y-=Math.cos(this.angle)*this.speed;
@@ -128,9 +129,9 @@ class Car {
     }
     ctx.beginPath();
     ctx.moveTo(this.polygon[0].x, this.polygon[0].y);
-    for (let i = 0; i < this.polygon.length; i++) {
-      ctx.lineTo(this.polygon[i].x, this.polygon[i].y);
-    }
+    this.polygon.forEach(({ x, y }) => {
+      ctx.lineTo(x, y);
+    })
     ctx.fill();
 
     if (this.sensor && drawSensor) {

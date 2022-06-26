@@ -1,5 +1,7 @@
 class NeuralNetwork {
   constructor(neuronCounts) {
+    this.name = getRandomName();
+    this.generation = 0;
     this.levels = [];
     for (let i = 0; i < neuronCounts.length - 1; i++) {
       this.levels.push(new Level(neuronCounts[i], neuronCounts[i+1]))
@@ -19,6 +21,8 @@ class NeuralNetwork {
   }
 
   static mutate(network, amount= 1) {
+    network.generation++
+    network.name = getRandomName();
     network.levels.forEach(level => {
       for (let i = 0; i < level.biases.length; i++) {
         level.biases[i] = lerp(

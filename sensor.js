@@ -11,50 +11,44 @@ class Sensor {
   update(roadBorders, traffic){
     this.#castRays();
     this.readings = [];
-    for (let i = 0; i < this.rays.length; i++) {
+    this.rays.forEach(ray => {
       this.readings.push(
-        this.#getReading(this.rays[i], roadBorders, traffic)
+        this.#getReading(ray, roadBorders, traffic)
       )
-    }
+    })
   }
 
   #getReading(ray, roadBorders, traffic) {
-    const touches = [];
+    let closestTouch = null;
 
-    for (let i = 0; i < roadBorders.length; i++) {
+    roadBorders.forEach(roadBorder => {
       const touch = getIntersection(
         ray[0],
         ray[1],
-        roadBorders[i][0],
-        roadBorders[i][1]
+        roadBorder[0],
+        roadBorder[1]
       )
-      if (touch) {
-        touches.push(touch);
+      if (touch && (!closestTouch || touch.offset < closestTouch.offset)) {
+        closestTouch = touch
       }
-    }
+    });
 
     for (let i = 0; i < traffic.length; i++) {
       const poly = traffic[i].polygon;
       for (let j = 0; j < poly.length; j++) {
-        const value = getIntersection(
+        const touch = getIntersection(
           ray[0],
           ray[1],
           poly[j],
           poly[(j+1) % poly.length]
         )
-        if (value) {
-          touches.push(value)
+        if (touch && (!closestTouch || touch.offset < closestTouch.offset)) {
+          closestTouch = touch
         }
       }
     }
 
-    if (!touches.length) {
-      return null;
-    } else {
-      const offsets = touches.map(({ offset })=> offset)
-      const minOffset = Math.min(...offsets);
-      return touches.find(({ offset })=> offset === minOffset)
-    }
+    return closestTouch;
   }
 
   #castRays() {

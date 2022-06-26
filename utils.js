@@ -38,3 +38,11 @@ function polysIntersect(poly1, poly2) {
   }
   return false;
 }
+
+const str = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz'
+function getRandomChar() {
+  return str[Math.floor(Math.random()*str.length)];
+}
+function getRandomName(number = 4) {
+  return new Array(number).fill(0).map(() => getRandomChar()).join('');
+}

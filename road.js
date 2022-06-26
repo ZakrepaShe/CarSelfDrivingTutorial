@@ -46,13 +46,19 @@ class Road {
     }
 
     ctx.setLineDash([])
-    this.borders.forEach(border => {
+    this.borders.forEach(([start, end]) => {
       ctx.beginPath();
-      ctx.moveTo(border[0].x, border[0].y);
-      ctx.lineTo(border[1].x, border[1].y);
+      ctx.moveTo(start.x, start.y);
+      ctx.lineTo(end.x, end.y);
       ctx.stroke();
     });
 
+    // Finish line
+    ctx.strokeStyle = 'red';
+    ctx.beginPath();
+    ctx.moveTo(this.left, -3000);
+    ctx.lineTo(this.right, -3000);
+    ctx.stroke();
   }
 }
 
